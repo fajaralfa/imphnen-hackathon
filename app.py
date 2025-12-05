@@ -4,11 +4,11 @@ import uuid
 from dotenv import load_dotenv
 load_dotenv()
 
-from fastapi import Body, FastAPI, UploadFile, File, Form
-from datetime import datetime, timedelta
+from fastapi import Body, FastAPI, UploadFile, File, Form, Depends
+from datetime import datetime, timedelta, timezone
 from jose import jwt
 
-from auth import verify_google_id_token, JWT_SECRET, JWT_ALGO, JWT_EXP_MINUTES
+from auth import verify_google_id_token, JWT_SECRET, JWT_ALGO, JWT_EXP_MINUTES, require_auth
 from gencaption import validate_image, generate_multi
 from log import logger
 
@@ -49,7 +49,7 @@ async def mobile_google_login(id_token: str = Body(..., embed=True)):
     google_sub = payload["sub"]
     email = payload.get("email")
 
-    exp = datetime.now(datetime.timezone.utc) + timedelta(minutes=JWT_EXP_MINUTES)
+    exp = datetime.now(timezone.utc) + timedelta(minutes=JWT_EXP_MINUTES)
     access_token = jwt.encode(
         {
             "sub": google_sub,
