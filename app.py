@@ -40,8 +40,8 @@ async def caption_generate(
     return {"caption": caption}
 
 
-@app.post("/auth/mobile/google")
-async def mobile_google_login(id_token: str = Body(...)):
+@app.post("/api/auth/mobile/google")
+async def mobile_google_login(id_token: str = Body(..., embed=True)):
     logger.info("Login request from mobile client")
     # Verify token from Google SDK
     payload = await verify_google_id_token(id_token)
