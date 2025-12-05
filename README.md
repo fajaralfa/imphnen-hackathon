@@ -1,4 +1,4 @@
-# UMKMCaptGen
+# UMKM CaptGen
 
 ## Installation
 
