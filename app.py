@@ -2,31 +2,22 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException, status
 from PIL import Image, UnidentifiedImageError
 from io import BytesIO
 from starlette.middleware.sessions import SessionMiddleware
-import gradio as gr
 from google import genai
 from dotenv import load_dotenv
 from os import getenv
+from typing import List
 
 load_dotenv()
 
 app = FastAPI()
 client = genai.Client()
 secret_key = getenv("SECRET_KEY")
-assert secret_key != None
+assert secret_key is not None
 
 app.add_middleware(SessionMiddleware, secret_key=secret_key)
 
-def generate_caption(img, additional_context):
-    prompt = f"Buatlah satu caption yang sangat menarik dan manusiawi untuk mempromosikan produk ini. Buat saja teks captionnya, jangan berikan teks lain. {additional_context}"
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=[prompt, img],
-    )
-    return response.text
-
-
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
-MAX_IMAGE_SIZE_MB = 10  # adjust for your use-case
+MAX_IMAGE_SIZE_MB = 10
 
 
 def validate_image(upload: UploadFile, image_bytes: bytes) -> Image.Image:
@@ -49,51 +40,58 @@ def validate_image(upload: UploadFile, image_bytes: bytes) -> Image.Image:
     # Validate PIL image parsing
     try:
         pil_image = Image.open(BytesIO(image_bytes))
-        pil_image.verify()         # Validate integrity
-        pil_image = Image.open(BytesIO(image_bytes))  # Reopen after verify()
+        pil_image.verify()
+        pil_image = Image.open(BytesIO(image_bytes))
     except UnidentifiedImageError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Uploaded file is not a valid image.",
+            detail=f"Uploaded file '{upload.filename}' is not a valid image.",
         )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Error reading image: {str(e)}"
+            detail=f"Error reading image '{upload.filename}': {str(e)}"
         )
 
     return pil_image
 
 
+def generate_caption_multi(images: List[Image.Image], additional_context: str | None = None):
+    """
+    Pass multiple images to Google GenAI and generate one combined caption.
+    """
+    prompt = f"Buatlah satu caption yang sangat menarik dan manusiawi untuk mempromosikan produk ini. Buat saja teks captionnya, jangan berikan teks lain. {additional_context or ''}"
+    
+    # Convert PIL images to bytes
+    img_bytes_list = []
+    for img in images:
+        buf = BytesIO()
+        img.save(buf, format="PNG")
+        img_bytes_list.append(buf.getvalue())
+
+    # GenAI accepts multiple contents
+    contents = [prompt] + images
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=contents
+    )
+
+    return response.text
+
+
 @app.post("/api/v1/caption/generate")
 async def caption_generate(
-    image: UploadFile = File(...),
+    images: List[UploadFile] = File(...),
     context: str | None = Form(None)
 ):
-    # Read image bytes
-    image_bytes = await image.read()
+    pil_images = []
 
-    # Validate image and produce a safe PIL object
-    image_pil = validate_image(image, image_bytes)
+    for image in images:
+        image_bytes = await image.read()
+        pil_image = validate_image(image, image_bytes)
+        pil_images.append(pil_image)
 
-    # Pass to your model
-    caption = generate_caption(image_pil, context)
-
+    caption = generate_caption_multi(pil_images, context)
     return {"caption": caption}
 
-
-with gr.Blocks() as gr_io:
-    gr.Markdown("## Caption Generator")
-
-    with gr.Column():    # <-- This ensures vertical stacking
-        img_input = gr.Image(type="pil", label="Upload Image", height="500px")
-        caption_output = gr.TextArea(label="✨ Caption")
-
-        generate_btn = gr.Button("Generate Caption")
-
-        # When button is clicked, call the function
-        generate_btn.click(fn=generate_caption, inputs=img_input, outputs=caption_output, show_progress="full")
-
-# Mount Gradio on FastAPI
-app = gr.mount_gradio_app(app, gr_io, path="/")
 
