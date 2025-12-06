@@ -5,12 +5,11 @@ on:
     branches: [main]
 
 jobs:
-  test-and-deploy:
-    environment: 'Test env'
+  ci:
+    name: "CI - Run Tests"
     runs-on: ubuntu-latest
-
+    environment: Test
     steps:
-      # --- CI SECTION ---
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -37,14 +36,18 @@ jobs:
         env:
           GITHUB_HOST: ${{ secrets.VPS_HOST }}
 
-      # --- CD SECTION ---
+  cd:
+    name: "CD - Deploy to VPS"
+    runs-on: ubuntu-latest
+    needs: ci                  # deploy only runs if CI passes
+    environment: Deployment
+    steps:
       - name: Deploy to VPS via SSH
-        if: success()
         uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }} # private key
+          key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           script: |
             cd /home/deploy/apps/captionize
