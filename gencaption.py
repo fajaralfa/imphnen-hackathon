@@ -1,5 +1,6 @@
 from io import BytesIO
 from typing import List
+from os import getenv
 
 from PIL import Image, UnidentifiedImageError
 from fastapi import  UploadFile, HTTPException, status
@@ -7,7 +8,10 @@ from google import genai
 
 from log import logger
 
-client = genai.Client()
+GEMINI_API_KEY = getenv("GEMINI_API_KEY")
+assert GEMINI_API_KEY is not None
+
+client = genai.Client(api_key=GEMINI_API_KEY)
 
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_IMAGE_SIZE_MB = 10
