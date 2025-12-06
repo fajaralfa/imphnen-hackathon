@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from fastapi import Body, FastAPI, UploadFile, File, Form, Depends
+from fastapi.staticfiles import StaticFiles
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 from google import genai
@@ -14,6 +15,8 @@ from gencaption import validate_image, generate_multi, get_genai_client
 from log import logger
 
 app = FastAPI()
+
+app.mount("/", StaticFiles(directory="./static", html=True), name="static")
 
 @app.middleware("http")
 async def log_requests(request, call_next):
