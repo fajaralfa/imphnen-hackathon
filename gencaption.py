@@ -11,11 +11,11 @@ from log import logger
 GEMINI_API_KEY = getenv("GEMINI_API_KEY")
 assert GEMINI_API_KEY is not None
 
-client = genai.Client(api_key=GEMINI_API_KEY)
-
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_IMAGE_SIZE_MB = 10
 
+def get_genai_client() -> genai.Client:
+    return genai.Client(api_key=GEMINI_API_KEY)
 
 async def validate_image(upload: UploadFile) -> Image.Image:
     logger.info(f"Validating image: {upload.filename}, type={upload.content_type}")
@@ -57,10 +57,12 @@ async def validate_image(upload: UploadFile) -> Image.Image:
     return pil_image
 
 
-async def generate_multi(images: List[Image.Image], additional_context: str | None = None):
+async def generate_multi(images: List[Image.Image], additional_context: str | None = None, client = None):
     """
     Pass multiple images to Google GenAI and generate one combined caption.
     """
+    client = client or get_genai_client()
+    
     logger.info(f"Generating caption for {len(images)} images")
     prompt = f"Buatlah satu caption yang sangat menarik dan manusiawi untuk mempromosikan produk ini. Buat saja teks captionnya, jangan berikan teks lain. {additional_context or ''}"
     

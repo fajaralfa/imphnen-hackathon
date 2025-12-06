@@ -37,17 +37,14 @@ def test_oversized_image(client):
 
 # mock GenAI API
 def test_caption_genai_mock(client):
-    with patch("gencaption.client.models.generate_content") as mock_gen:
-        mock_gen.return_value.text = "Test caption"
+    with open("tests/images/sample.png", "rb") as f:
+        response = client.post(
+            "/api/v1/caption/generate",
+            files={"images": ("sample.png", f, "image/png")}
+        )
 
-        with open("tests/images/sample.png", "rb") as f:
-            response = client.post(
-                "/api/v1/caption/generate",
-                files={"images": ("sample.png", f, "image/png")}
-            )
-
-        assert response.status_code == 200
-        assert response.json()["caption"] == "Test caption"
+    assert response.status_code == 200
+    assert response.json()["caption"] == "Mocked caption"
 
 # mock google ID token verification
 def test_google_login(client):

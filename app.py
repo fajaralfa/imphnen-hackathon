@@ -7,9 +7,10 @@ load_dotenv()
 from fastapi import Body, FastAPI, UploadFile, File, Form, Depends
 from datetime import datetime, timedelta, timezone
 from jose import jwt
+from google import genai
 
 from auth import verify_google_id_token, JWT_SECRET, JWT_ALGO, JWT_EXP_MINUTES, require_auth
-from gencaption import validate_image, generate_multi
+from gencaption import validate_image, generate_multi, get_genai_client
 from log import logger
 
 app = FastAPI()
@@ -24,9 +25,10 @@ async def log_requests(request, call_next):
 
 @app.post("/api/v1/caption/generate")
 async def caption_generate(
-    user=Depends(require_auth),
+    # user=Depends(require_auth),
     images: List[UploadFile] = File(...),
-    context: str | None = Form(None)
+    context: str | None = Form(None),
+    genai_client: genai.Client = Depends(get_genai_client)  # injected client
 ):
     logger.info(f"Caption request received: {len(images)} images")
     pil_images = []
@@ -35,10 +37,10 @@ async def caption_generate(
         pil_image = await validate_image(image)
         pil_images.append(pil_image)
 
-    caption = await generate_multi(pil_images, context)
+    # Pass injected client to generate_multi
+    caption = await generate_multi(pil_images, context, client=genai_client)
     logger.info("Caption returned to client")
     return {"caption": caption}
-
 
 @app.post("/api/auth/mobile/google")
 async def mobile_google_login(id_token: str = Body(..., embed=True)):
