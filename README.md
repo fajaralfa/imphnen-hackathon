@@ -1,13 +1,13 @@
-# UMKM CaptGen
+# CAPTIONIZE
 
-## Installation
+## Service Installation
 
-### Requirements:
+### Requirements
 
 - Pixi 0.60.0 (later version are not tested, but should be work)
 - Google AI Studio API Key
 
-### Installation step
+### Steps
 
 ```bash
 
