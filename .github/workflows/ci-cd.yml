@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # --- CI SECTION ---
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -28,3 +29,18 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: pixi run pytest
+
+      # --- CD SECTION ---
+      - name: Deploy to VPS via SSH
+        if: success()
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }} # private key
+          port: 22
+          script: |
+            cd ~/apps/imphnen-hackathon
+            git pull origin main
+            pixi install
+            sudo systemctl restart fastapi-app.service
