@@ -6,3 +6,4 @@ logs/
 .pytest_cache/
 .pixi/*
 !.pixi/config.toml
+.DS_Store
