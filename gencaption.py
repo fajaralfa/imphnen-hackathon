@@ -57,14 +57,14 @@ async def validate_image(upload: UploadFile) -> Image.Image:
     return pil_image
 
 
-async def generate_multi(images: List[Image.Image], additional_context: str | None = None, client = None):
+async def generate_multi(images: List[Image.Image], additional_context: str = '', client = None):
     """
     Pass multiple images to Google GenAI and generate one combined caption.
     """
     client = client or get_genai_client()
     
     logger.info(f"Generating caption for {len(images)} images")
-    prompt = f"Buatlah satu caption yang sangat menarik dan manusiawi untuk mempromosikan produk ini. Buat saja teks captionnya, jangan berikan teks lain. {additional_context or ''}"
+    prompt = f"Buatlah satu caption yang sangat menarik dan manusiawi untuk mempromosikan produk ini. Buat saja teks captionnya, jangan berikan teks lain. Tambahkan keterangan berikut jika ada {additional_context}"
     
     # GenAI accepts multiple contents
     contents = [prompt] + images
