@@ -32,7 +32,7 @@ p {
 .split-overlay,
 .tags-overlay {
     position: fixed;
-    width: 100vw;
+    width: 100%;
     height: 100svh;
 }
 
@@ -126,7 +126,7 @@ p {
 
 nav {
     position: relative;
-    width: 100vw;
+    width: 100%;
     padding: 2em;
     display: flex;
     justify-content: space-between;
@@ -140,37 +140,9 @@ nav p#logo {
     font-size: 20px;
 }
 
-.card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50%;
-    height: 70%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    clip-path: polygon(0% 50%, 100% 50%, 100% 50%, 0%  50%);
-    background: white;
-}
-
-.card h1 {
-    text-align: start;
-    width: 100%;
-    font-size: 3rem;
-}
-
-.card .char span {
-    position: relative;
-    display: inline-block;
-    transform: translateY(100%);
-    will-change: transform;
-}
-
 .intro-title .char, 
 .outro-title .char,
-.hero-title .char, 
-.card .char {
+.hero-title .char {
     position: relative;
     display: inline-block;
     overflow: hidden;
@@ -206,7 +178,7 @@ nav p#logo {
     height: 100%;
 }
 
-.hero .title {
+.hero .hero-title {
     text-transform: uppercase;
     text-align: center;
     margin: 0 auto;
@@ -354,6 +326,12 @@ nav p#logo {
     text-align: center;
 }
 
+@media (max-width: 1500px) {
+    .container .mockup-hero {
+        height: 400px;
+    }
+}
+
 @media (max-width: 1000px) {
     h1 {
         font-size: 2.5rem;
@@ -361,15 +339,6 @@ nav p#logo {
 
     .outro-title {
         left: calc(50% + 4rem);
-    }
-
-    .card {
-        width: 75%;
-    }
-    
-
-    .card h1 {
-        font-size: 2.5rem;
     }
 
     .intro-title .char, 
