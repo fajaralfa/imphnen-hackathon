@@ -27,7 +27,7 @@ def test_invalid_mime_type(client):
 def test_oversized_image(client):
     big_file = b"a" * (11 * 1024 * 1024)  # 11MB
 
-    with patch("gencaption.UploadFile.read", return_value=big_file):
+    with patch("services.gencaption.UploadFile.read", return_value=big_file):
         response = client.post(
             "/api/v1/caption/generate",
             files={"images": ("big.jpg", big_file, "image/jpeg")},

@@ -7,7 +7,7 @@ from fastapi import HTTPException, Depends
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi.security import HTTPBearer
 
-from log import logger
+from services.log import logger
 
 JWT_SECRET = getenv("JWT_SECRET"); assert JWT_SECRET is not None
 JWT_ALGO = "HS256"
