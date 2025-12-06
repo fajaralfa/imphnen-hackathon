@@ -6,7 +6,7 @@ from PIL import Image, UnidentifiedImageError
 from fastapi import  UploadFile, HTTPException, status
 from google import genai
 
-from log import logger
+from services.log import logger
 
 GEMINI_API_KEY = getenv("GEMINI_API_KEY")
 assert GEMINI_API_KEY is not None

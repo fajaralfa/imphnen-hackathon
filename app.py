@@ -10,9 +10,9 @@ from datetime import datetime, timedelta, timezone
 from jose import jwt
 from google import genai
 
-from auth import verify_google_id_token, JWT_SECRET, JWT_ALGO, JWT_EXP_MINUTES, require_auth
-from gencaption import validate_image, generate_multi, get_genai_client
-from log import logger
+from services.auth import verify_google_id_token, JWT_SECRET, JWT_ALGO, JWT_EXP_MINUTES, require_auth
+from services.gencaption import validate_image, generate_multi, get_genai_client
+from services.log import logger
 
 app = FastAPI()
 
