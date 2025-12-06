@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:imphenhackaton/features/generate_caption/presentation/pages/widgets/img_nav_button.dart';
 
-/// A carousel widget to display multiple images with navigation.
 class ImageCarousel extends StatefulWidget {
   const ImageCarousel({
     required this.imageFiles,

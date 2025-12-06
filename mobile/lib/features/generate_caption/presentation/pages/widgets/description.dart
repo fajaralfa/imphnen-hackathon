@@ -1,9 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:imphenhackaton/features/generate_caption/presentation/bloc/generate_caption_bloc.dart';
 
-class DescriptionWidget extends StatelessWidget {
+class DescriptionWidget extends StatefulWidget {
   const DescriptionWidget({super.key});
+
+  @override
+  State<DescriptionWidget> createState() => _DescriptionWidgetState();
+}
+
+class _DescriptionWidgetState extends State<DescriptionWidget> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    // Listen to text changes and update bloc
+    _controller.addListener(_onDescriptionChanged);
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onDescriptionChanged);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onDescriptionChanged() {
+    context.read<GenerateCaptionBloc>().add(
+          UpdateDescriptionEvent(_controller.text),
+        );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +50,7 @@ class DescriptionWidget extends StatelessWidget {
           ),
         ),
         TextField(
+          controller: _controller,
           maxLines: 5,
           decoration: InputDecoration(
             filled: true,

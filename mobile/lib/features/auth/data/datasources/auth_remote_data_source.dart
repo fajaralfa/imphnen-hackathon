@@ -48,10 +48,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const ServerException('Sign in cancelled');
       }
 
-      print('Google account ID: ${account.id}');
-      print('Google account email: ${account.email}');
-      print('Google account name: ${account.displayName}');
-      print('Google account photo URL: ${account.photoUrl}');
+      // print('Google account ID: ${account.id}');
+      // print('Google account email: ${account.email}');
+      // print('Google account name: ${account.displayName}');
+      // print('Google account photo URL: ${account.photoUrl}');
 
       // Step 2: Get the Google ID token
       final authentication = await account.authentication;
@@ -64,7 +64,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // print('Google ID token: $idToken');
 
       // Step 3: Send ID token to backend for verification
-      print('Sending token to backend: $_apiBaseUrl/auth/mobile/google');
+      // print('Sending token to backend: $_apiBaseUrl/auth/mobile/google');
 
       final response = await _httpClient.post(
         Uri.parse('$_apiBaseUrl/auth/mobile/google'),
@@ -77,7 +77,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (response.statusCode != 200) {
         throw ServerException(
-          'Backend authentication failed: ${response.body}',
+          'Terjadi Kesalahan: ${response.statusCode}',
+          // 'Backend authentication failed: ${response.body}',
         );
       }
 
@@ -94,7 +95,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: account.email,
         displayName: account.displayName,
         photoUrl: account.photoUrl,
-        token: jwtToken, // This is now the JWT from your backend
+        token: jwtToken,
       );
     } catch (e, stackTrace) {
       print('=== AUTH ERROR ===');

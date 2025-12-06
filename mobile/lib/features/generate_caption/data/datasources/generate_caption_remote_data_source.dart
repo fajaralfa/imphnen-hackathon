@@ -80,7 +80,7 @@ class GenerateCaptionRemoteDataSourceImpl
       }
 
       print('=== GENERATE CAPTION REQUEST ===');
-      print('URL: $uri');
+      // print('URL: $uri');
       print('Images count: ${images.length}');
       print('Context: $context');
 
@@ -89,7 +89,7 @@ class GenerateCaptionRemoteDataSourceImpl
       final response = await http.Response.fromStream(streamedResponse);
 
       print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      // print('Response body: ${response.body}');
 
       // Handle 401 Unauthorized
       if (response.statusCode == 401) {

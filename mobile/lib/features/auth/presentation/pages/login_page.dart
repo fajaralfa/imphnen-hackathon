@@ -47,7 +47,7 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 80),
 
                       Text(
-                        'Caption Generator',
+                        'CAPTIONIZE',
                         style: GoogleFonts.inter(
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
