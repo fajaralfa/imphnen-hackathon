@@ -102,7 +102,7 @@ p {
 
 .container .mockup-hero {
     position: absolute;
-    height: 600px;
+    height: 60vh;
     bottom: 0px;
     left: 50%;
     transform: translate(-50%, 0%);
@@ -208,15 +208,14 @@ nav p#logo {
 .about {
     position: relative;
     width: 100%;
-    height: 100%;
-    min-height: 100svh;
+    height: max-content;
 }
 
 .about .about-content {
     width: 50%;
     margin: 0 auto;
     color: white;
-    padding: 10rem 0;
+    padding: 20rem 0;
 }
 
 .about-content p {
@@ -228,6 +227,10 @@ nav p#logo {
 .how-to-use-title {
     padding: 0 9rem;
     color: white;
+}
+
+.how-to-use-title h1 {
+    font-size: 4rem;
 }
 
 .how-to-use {
@@ -292,6 +295,10 @@ nav p#logo {
     height:100%;
 }
 
+.product {
+    background-color: #fff;
+}
+
 .product img {
     width: 100%;
     height: 100%;
@@ -305,8 +312,8 @@ nav p#logo {
 }
 
 .mobilePhoto {
-	width:80vw;
-	height:80vw;
+	width:100%;
+	height:60vw;
 	margin-top:5em;
 	border-radius:6vw;
     overflow: hidden;
@@ -324,12 +331,6 @@ nav p#logo {
     font-size: 18vw;
     bottom: -6rem;
     text-align: center;
-}
-
-@media (max-width: 1500px) {
-    .container .mockup-hero {
-        height: 400px;
-    }
 }
 
 @media (max-width: 1000px) {
@@ -368,15 +369,19 @@ nav p#logo {
 
     .about .about-content {
         width: 85%;
-        padding: 5rem 0;
+        padding: 10rem 0;
     }
 
     .about-content p {
         font-size: 1.25rem;
     }
 
-    .how-to-use-title {
-        padding: 0 4rem;
+    .how-to-use-title, .how-to-use {
+        padding: 0 2rem;
+    }
+
+    .how-to-use-title h1 {
+        font-size: 2rem;
     }
 
     .left {
