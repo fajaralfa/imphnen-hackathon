@@ -16,8 +16,6 @@ from log import logger
 
 app = FastAPI()
 
-app.mount("/", StaticFiles(directory="./static", html=True), name="static")
-
 @app.middleware("http")
 async def log_requests(request, call_next):
     request_id = str(uuid.uuid4())
@@ -68,3 +66,4 @@ async def mobile_google_login(id_token: str = Body(..., embed=True)):
 
     return {"access_token": access_token}
 
+app.mount("/", StaticFiles(directory="./static", html=True), name="static")
