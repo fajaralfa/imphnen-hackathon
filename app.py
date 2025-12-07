@@ -26,7 +26,7 @@ async def log_requests(request, call_next):
 
 @app.post("/api/v1/caption/generate")
 async def caption_generate(
-    # user=Depends(require_auth),
+    user=Depends(require_auth),
     images: List[UploadFile] = File(...),
     context: str | None = Form(None),
     genai_client: genai.Client = Depends(get_genai_client)  # injected client
