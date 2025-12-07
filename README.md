@@ -1,6 +1,6 @@
 # CAPTIONIZE
 
-## Service Installation
+## Development
 
 ### Requirements
 
@@ -37,5 +37,8 @@ cp .env.example .env
 # 7. Run the development server
 # Note: This is for development only. For production, use uvicorn/gunicorn under systemd or Docker.
 pixi run uvicorn app:app --reload
+
+# 8. Add the pre-commit formatter & linter hook
+git config core.hooksPath git-hooks/
 
 ```

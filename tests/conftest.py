@@ -9,9 +9,11 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from app import app, get_genai_client
 from app import require_auth
 
+
 # Mock the auth dependency
 def mock_require_auth():
     return {"sub": 123}  # Mocked user info
+
 
 @pytest.fixture
 def client():
@@ -23,6 +25,7 @@ def client():
 
     # Clean up overrides after test
     app.dependency_overrides = {}
+
 
 @pytest.fixture(autouse=True)
 def mock_genai_client():

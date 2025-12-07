@@ -11,6 +11,7 @@ from services.log import logger
 
 auth_scheme = HTTPBearer()
 
+
 async def verify_google_id_token(id_token: str) -> Dict[str, Any]:
     """
     Verifies the ID token issued by Google Sign-In SDK (Android/iOS).
@@ -52,10 +53,11 @@ async def verify_google_id_token(id_token: str) -> Dict[str, Any]:
 
 def require_auth(token: HTTPAuthorizationCredentials = Depends(auth_scheme)):
     try:
-        decoded = jwt.decode(token.credentials, config.JWT_SECRET, algorithms=[config.JWT_ALGO])
+        decoded = jwt.decode(
+            token.credentials, config.JWT_SECRET, algorithms=[config.JWT_ALGO]
+        )
         logger.info(f"Authenticated user: {decoded['sub']}")
         return decoded
     except JWTError:
         logger.warning("Invalid or missing JWT")
         raise HTTPException(401, "Unauthorized")
-

@@ -14,20 +14,24 @@ from services.log import logger
 
 app = FastAPI()
 
+
 @app.middleware("http")
 async def log_requests(request, call_next):
     request_id = str(uuid.uuid4())
     logger.info(f"[{request_id}] Incoming: {request.method} {request.url.path}")
     response = await call_next(request)
-    logger.info(f"[{request_id}] Completed: {request.method} {request.url.path} -> {response.status_code}")
+    logger.info(
+        f"[{request_id}] Completed: {request.method} {request.url.path} -> {response.status_code}"
+    )
     return response
+
 
 @app.post("/api/v1/caption/generate")
 async def caption_generate(
     user=Depends(require_auth),
     images: List[UploadFile] = File(...),
     context: str | None = Form(None),
-    genai_client: genai.Client = Depends(get_genai_client)  # injected client
+    genai_client: genai.Client = Depends(get_genai_client),  # injected client
 ):
     logger.info(f"Caption request received: {len(images)} images")
     pil_images = []
@@ -37,9 +41,10 @@ async def caption_generate(
         pil_images.append(pil_image)
 
     # Pass injected client to generate_multi
-    caption = await generate_multi(pil_images, context, client=genai_client)
+    caption = await generate_multi(pil_images, context or "", client=genai_client)
     logger.info("Caption returned to client")
     return {"caption": caption}
+
 
 @app.post("/api/auth/mobile/google")
 async def mobile_google_login(id_token: str = Body(..., embed=True)):
@@ -52,16 +57,13 @@ async def mobile_google_login(id_token: str = Body(..., embed=True)):
 
     exp = datetime.now(timezone.utc) + timedelta(minutes=config.JWT_EXP_MINUTES)
     access_token = jwt.encode(
-        {
-            "sub": google_sub,
-            "email": email,
-            "exp": exp
-        },
+        {"sub": google_sub, "email": email, "exp": exp},
         config.JWT_SECRET,
         algorithm=config.JWT_ALGO,
     )
     logger.info(f"Issued JWT for user: {google_sub}")
 
     return {"access_token": access_token}
+
 
 app.mount("/", StaticFiles(directory="./static", html=True), name="static")
