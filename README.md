@@ -1,5 +1,7 @@
 # CAPTIONIZE
 
+[App & Video Introduction](https://drive.google.com/drive/folders/1UJQ9fnzs6NGt7eszSTjDbjQ2KzTXd_V2?usp=sharing)
+
 ## Development
 
 ### Requirements
