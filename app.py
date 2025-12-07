@@ -1,16 +1,14 @@
 from typing import List
 import uuid
 
-from dotenv import load_dotenv
-load_dotenv()
-
 from fastapi import Body, FastAPI, UploadFile, File, Form, Depends
 from fastapi.staticfiles import StaticFiles
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 from google import genai
 
-from services.auth import verify_google_id_token, JWT_SECRET, JWT_ALGO, JWT_EXP_MINUTES, require_auth
+from services.config import config
+from services.auth import verify_google_id_token, require_auth
 from services.gencaption import validate_image, generate_multi, get_genai_client
 from services.log import logger
 
@@ -52,15 +50,15 @@ async def mobile_google_login(id_token: str = Body(..., embed=True)):
     google_sub = payload["sub"]
     email = payload.get("email")
 
-    exp = datetime.now(timezone.utc) + timedelta(minutes=JWT_EXP_MINUTES)
+    exp = datetime.now(timezone.utc) + timedelta(minutes=config.JWT_EXP_MINUTES)
     access_token = jwt.encode(
         {
             "sub": google_sub,
             "email": email,
             "exp": exp
         },
-        JWT_SECRET,
-        algorithm=JWT_ALGO,
+        config.JWT_SECRET,
+        algorithm=config.JWT_ALGO,
     )
     logger.info(f"Issued JWT for user: {google_sub}")
 

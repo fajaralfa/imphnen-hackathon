@@ -1,40 +1,34 @@
 from io import BytesIO
 from typing import List
-from os import getenv
 
 from PIL import Image, UnidentifiedImageError
 from fastapi import  UploadFile, HTTPException, status
 from google import genai
 
+from services.config import config
 from services.log import logger
 
-GEMINI_API_KEY = getenv("GEMINI_API_KEY")
-assert GEMINI_API_KEY is not None
-
-ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
-MAX_IMAGE_SIZE_MB = 10
-
 def get_genai_client() -> genai.Client:
-    return genai.Client(api_key=GEMINI_API_KEY)
+    return genai.Client(api_key=config.GEMINI_API_KEY)
 
 async def validate_image(upload: UploadFile) -> Image.Image:
     logger.info(f"Validating image: {upload.filename}, type={upload.content_type}")
     # Validate content type
-    if upload.content_type not in ALLOWED_IMAGE_TYPES:
+    if upload.content_type not in config.ALLOWED_IMAGE_TYPES:
         logger.warning(f"Rejected image type: {upload.content_type}")
         raise HTTPException(
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
             detail=f"Unsupported file type: {upload.content_type}. "
-                   f"Allowed types: {', '.join(ALLOWED_IMAGE_TYPES)}"
+                   f"Allowed types: {', '.join(config.ALLOWED_IMAGE_TYPES)}"
         )
 
     # Validate file size
     image_bytes = await upload.read()
     size_mb = len(image_bytes) / (1024 * 1024)
-    if size_mb > MAX_IMAGE_SIZE_MB:
+    if size_mb > config.MAX_IMAGE_SIZE_MB:
         raise HTTPException(
             status_code=status.HTTP_413_CONTENT_TOO_LARGE,
-            detail=f"Image too large ({size_mb:.2f}MB). Max size is {MAX_IMAGE_SIZE_MB}MB."
+            detail=f"Image too large ({size_mb:.2f}MB). Max size is {config.MAX_IMAGE_SIZE_MB}MB."
         )
 
     # Validate PIL image parsing
